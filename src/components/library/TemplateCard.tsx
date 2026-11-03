@@ -13,6 +13,7 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
   const { isSaved, toggleSave, isLiked, toggleLike, preferences } = useTemplates();
   const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const saved = isSaved(template.id);
@@ -93,14 +94,19 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
         className="relative w-full overflow-hidden bg-[#F3F4F6] dark:bg-[#111111]"
         style={{ aspectRatio: "16 / 9" }}
       >
-        {template.previewVideo ? (
+        {/* Skeleton Shimmer */}
+        {!imageLoaded && (
+          <div className="absolute inset-0 animate-pulse bg-neutral-200 dark:bg-neutral-800" />
+        )}
+
+        {template.previewVideo && isHovered ? (
           <video
             ref={videoRef}
             src={template.previewVideo}
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
             poster={template.previewImage}
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
           />
@@ -109,7 +115,11 @@ export function TemplateCard({ template, onSelect }: TemplateCardProps) {
             src={template.previewImage}
             alt={template.title}
             loading="lazy"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            decoding="async"
+            onLoad={() => setImageLoaded(true)}
+            className={`absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-[1.04] ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
           />
         )}
 

@@ -187,6 +187,20 @@ export function TemplateDetailsModal({
                       {template.author}
                     </strong>
                   </span>
+                  {template.sourceUrl && (
+                    <>
+                      <span>·</span>
+                      <a
+                        href={template.sourceUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-[#888888] hover:text-[#111111] dark:hover:text-[#FFFFFF] transition-colors"
+                      >
+                        <span>{template.authorAttribution || "View Reference"}</span>
+                        <ExternalLink className="h-2.5 w-2.5 opacity-60" />
+                      </a>
+                    </>
+                  )}
                   <span>·</span>
                   <span>{template.createdAt}</span>
                 </div>

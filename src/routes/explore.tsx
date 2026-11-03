@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { SearchX } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { SearchX, ChevronDown } from "lucide-react";
 import { LibraryLayout } from "@/components/library/LibraryLayout";
 import { LibraryFilterBar } from "@/components/library/LibraryFilterBar";
 import { LibraryOverviewBar } from "@/components/library/LibraryOverviewBar";
@@ -31,6 +31,8 @@ function ExplorePage() {
     selectedStack,
     clearFilters,
   } = useTemplates();
+
+  const [visibleCount, setVisibleCount] = useState(20);
 
   // Filter logic
   const filteredTemplates = useMemo(() => {
@@ -81,6 +83,14 @@ function ExplorePage() {
     });
   }, [templates, selectedType, selectedCategory, selectedStack, searchQuery]);
 
+  // Reset pagination when search or filters change
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [searchQuery, selectedType, selectedCategory, selectedStack]);
+
+  const displayedTemplates = filteredTemplates.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredTemplates.length;
+
   return (
     <LibraryLayout>
       {({ openTemplateModal }) => (
@@ -128,11 +138,46 @@ function ExplorePage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
-              {filteredTemplates.map((template) => (
-                <TemplateCard key={template.id} template={template} onSelect={openTemplateModal} />
-              ))}
-            </div>
+            <>
+              {/* Responsive 4-Column Grid: Large desktop (≥1280px): 4 cols, Laptop (1024-1279px): 3 cols, Tablet (640-1023px): 2 cols, Mobile (<640px): 1 col */}
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                style={{ gap: "24px" }}
+              >
+                {displayedTemplates.map((template) => (
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    onSelect={openTemplateModal}
+                  />
+                ))}
+              </div>
+
+              {/* Load More Pagination */}
+              {hasMore && (
+                <div className="mt-10 flex flex-col items-center justify-center gap-3">
+                  <div className="text-xs text-[#666666] dark:text-[#A1A1A1]">
+                    Showing {displayedTemplates.length} of {filteredTemplates.length} templates
+                  </div>
+                  <button
+                    onClick={() => setVisibleCount((prev) => prev + 12)}
+                    className="inline-flex items-center gap-2 rounded-xl border border-[#E5E5E5] bg-[#FFFFFF] px-6 py-2.5 text-xs font-semibold text-[#111111] shadow-xs transition-all hover:bg-neutral-100 hover:border-[#CCCCCC] dark:border-[#222222] dark:bg-[#080808] dark:text-[#FFFFFF] dark:hover:bg-[#111111] dark:hover:border-[#333333]"
+                  >
+                    <span>
+                      Load More Templates (+
+                      {Math.min(12, filteredTemplates.length - displayedTemplates.length)})
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+
+              {!hasMore && filteredTemplates.length > 20 && (
+                <div className="mt-10 text-center text-xs text-[#888888] dark:text-[#555555]">
+                  All {filteredTemplates.length} templates loaded
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

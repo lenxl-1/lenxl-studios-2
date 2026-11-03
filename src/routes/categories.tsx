@@ -11,6 +11,10 @@ import {
   BarChart2,
   ShieldCheck,
   Terminal,
+  HeartPulse,
+  GraduationCap,
+  Building2,
+  CheckSquare,
   ArrowRight,
 } from "lucide-react";
 import { LibraryLayout } from "@/components/library/LibraryLayout";
@@ -120,6 +124,38 @@ const CATEGORY_LIST: CategoryCardInfo[] = [
     icon: Terminal,
     description: "Interactive documentation, API playgrounds, CLI references, and dev consoles.",
     color: "from-sky-500/10 to-cyan-500/10",
+  },
+  {
+    name: "Healthcare",
+    categoryFilterKey: "Healthcare",
+    icon: HeartPulse,
+    description:
+      "Telehealth portals, clinical EHR records, appointment scheduling, and patient vitals.",
+    color: "from-rose-500/10 to-pink-500/10",
+  },
+  {
+    name: "Education",
+    categoryFilterKey: "Education",
+    icon: GraduationCap,
+    description:
+      "Video lecture players, interactive quizzes, syllabus progress, and certificate hubs.",
+    color: "from-amber-500/10 to-yellow-500/10",
+  },
+  {
+    name: "Real Estate",
+    categoryFilterKey: "Real Estate",
+    icon: Building2,
+    description:
+      "Architectural property showcases, split map viewings, virtual tours, and mortgage calculators.",
+    color: "from-teal-500/10 to-emerald-500/10",
+  },
+  {
+    name: "Productivity",
+    categoryFilterKey: "Productivity",
+    icon: CheckSquare,
+    description:
+      "Kanban task boards, time boxing, pomodoro timers, and document collaboration tools.",
+    color: "from-blue-500/10 to-cyan-500/10",
   },
 ];
 

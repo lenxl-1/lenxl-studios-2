@@ -25,7 +25,7 @@ export function LibraryLayout({ children }: LibraryLayoutProps) {
 
       {/* Main Content Area */}
       <main className="md:pl-[270px] min-h-screen flex flex-col">
-        <div className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="flex-1 w-full max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8">
           {children({ openTemplateModal })}
         </div>
       </main>
