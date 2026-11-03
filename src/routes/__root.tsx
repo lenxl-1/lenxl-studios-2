@@ -122,17 +122,20 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 import { TemplatesProvider } from "@/lib/templates-store";
+import { AuthProvider } from "@/lib/auth-context";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TemplatesProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <Toaster richColors position="top-center" />
-      </TemplatesProvider>
+      <AuthProvider>
+        <TemplatesProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <Toaster richColors position="top-center" />
+        </TemplatesProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

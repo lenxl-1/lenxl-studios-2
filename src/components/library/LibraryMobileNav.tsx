@@ -13,9 +13,13 @@ import {
   Sun,
   Moon,
   Home,
+  LogOut,
+  LogIn,
 } from "lucide-react";
+import { toast } from "sonner";
 import { LenxlLogo } from "@/components/LenxlLogo";
 import { useTemplates } from "@/lib/templates-store";
+import { useAuth } from "@/lib/auth-context";
 
 export function LibraryMobileNav() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -25,6 +29,7 @@ export function LibraryMobileNav() {
   const navigate = useNavigate();
 
   const { searchQuery, setSearchQuery, savedIds, theme, setTheme, userProfile } = useTemplates();
+  const { user, signOut } = useAuth();
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
@@ -215,21 +220,50 @@ export function LibraryMobileNav() {
               <span>Back to Landing Page</span>
             </Link>
 
-            <div className="flex items-center gap-3 pt-2">
-              <img
-                src={userProfile.avatar}
-                alt={userProfile.name}
-                className="h-9 w-9 rounded-full object-cover border border-[#E5E5E5] dark:border-[#222222]"
-              />
-              <div className="min-w-0">
-                <div className="truncate text-sm font-semibold text-[#111111] dark:text-[#FFFFFF]">
-                  {userProfile.name}
-                </div>
-                <div className="truncate text-xs text-[#666666] dark:text-[#A1A1A1]">
-                  {userProfile.email}
-                </div>
+            {user ? (
+              <div className="flex items-center justify-between pt-2">
+                <Link
+                  to="/settings"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 min-w-0 flex-1 hover:opacity-80 transition-opacity"
+                >
+                  <img
+                    src={userProfile.avatar}
+                    alt={userProfile.name}
+                    className="h-9 w-9 rounded-full object-cover border border-[#E5E5E5] dark:border-[#222222]"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-semibold text-[#111111] dark:text-[#FFFFFF]">
+                      {userProfile.name}
+                    </div>
+                    <div className="truncate text-xs text-[#666666] dark:text-[#A1A1A1]">
+                      {user.email || userProfile.email}
+                    </div>
+                  </div>
+                </Link>
+
+                <button
+                  onClick={async () => {
+                    await signOut();
+                    setMenuOpen(false);
+                    toast.success("Signed out successfully");
+                  }}
+                  title="Sign out"
+                  className="flex h-8 w-8 items-center justify-center rounded-md border border-[#E5E5E5] text-[#888888] hover:text-[#111111] dark:border-[#222222] dark:text-[#777777] dark:hover:text-white"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
               </div>
-            </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full rounded-xl bg-[#111111] px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-black"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Sign in / Sign up</span>
+              </Link>
+            )}
           </div>
         </div>
       )}

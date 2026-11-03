@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { INITIAL_TEMPLATES, type Template } from "./templates-data";
+import { useAuth } from "./auth-context";
 
 interface UserProfile {
   name: string;
@@ -127,6 +128,28 @@ export function TemplatesProvider({ children }: { children: React.ReactNode }) {
       // ignore
     }
   }, []);
+
+  const { user: supabaseUser } = useAuth();
+
+  useEffect(() => {
+    if (supabaseUser) {
+      const metadata = supabaseUser.user_metadata || {};
+      const fullName =
+        metadata.full_name || metadata.name || supabaseUser.email?.split("@")[0] || "Creator";
+      const avatarUrl =
+        metadata.avatar_url ||
+        metadata.picture ||
+        `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(fullName)}&backgroundColor=111111&textColor=ffffff`;
+
+      setUserProfileState((prev) => ({
+        ...prev,
+        name: fullName,
+        email: supabaseUser.email || prev.email,
+        avatar: avatarUrl,
+        role: "Pro Designer",
+      }));
+    }
+  }, [supabaseUser]);
 
   const applyTheme = (targetTheme: "dark" | "light" | "system") => {
     const isDark =

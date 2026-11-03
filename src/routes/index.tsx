@@ -46,6 +46,7 @@ import {
   Clipboard,
   Bookmark,
 } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 import { LeadDialog } from "@/components/LeadDialog";
 import { ThemeToggle, CustomCursor, Reveal } from "@/components/SiteEnhancements";
 import { LenxlLogo } from "@/components/LenxlLogo";
@@ -257,6 +258,7 @@ function Nav() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("home");
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const ids = Array.from(new Set(NAV_ITEMS.map((n) => n.id)));
@@ -303,32 +305,30 @@ function Nav() {
         </nav>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <LeadDialog
-            title="Log in to LENZL"
-            description="Enter your email to sign in to your template collection."
-            redirectTo="/explore"
-            trigger={
-              <button
-                type="button"
+          {user ? (
+            <Link
+              to="/explore"
+              className="hidden items-center gap-1.5 rounded-md bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 md:inline-flex"
+            >
+              <span>Explore Library</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/login"
                 className="hidden rounded-md px-3 py-1.5 text-sm text-foreground hover:bg-muted md:inline-flex"
               >
                 Log in
-              </button>
-            }
-          />
-          <LeadDialog
-            title="Create your LENZL Account"
-            description="Sign up for free to access verified AI prompt templates."
-            redirectTo="/explore"
-            trigger={
-              <button
-                type="button"
+              </Link>
+              <Link
+                to="/signup"
                 className="hidden items-center rounded-md bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90 md:inline-flex"
               >
                 Sign up
-              </button>
-            }
-          />
+              </Link>
+            </>
+          )}
           <button
             aria-label="Open menu"
             onClick={() => setOpen(true)}
@@ -389,32 +389,33 @@ function Nav() {
             })}
           </nav>
           <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6">
-            <LeadDialog
-              title="Log in to LENZL"
-              description="Enter your email to sign in to your template collection."
-              redirectTo="/explore"
-              trigger={
-                <button
-                  type="button"
+            {user ? (
+              <Link
+                to="/explore"
+                onClick={() => setOpen(false)}
+                className="w-full flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground hover:opacity-90"
+              >
+                <span>Open Explore Library</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
                   className="w-full rounded-md border border-border px-4 py-2.5 text-center text-sm font-medium hover:bg-muted"
                 >
                   Log in
-                </button>
-              }
-            />
-            <LeadDialog
-              title="Create your LENZL Account"
-              description="Sign up for free to access verified AI prompt templates."
-              redirectTo="/explore"
-              trigger={
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setOpen(false)}
                   className="w-full rounded-md bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground hover:opacity-90"
                 >
                   Sign up
-                </button>
-              }
-            />
+                </Link>
+              </>
+            )}
           </div>
         </aside>
       </div>
@@ -1264,15 +1265,12 @@ function CTA() {
           >
             Browse templates
           </button>
-          <LeadDialog
-            title="LenxlUI Pricing & Plans"
-            description="Get full access to all 50+ templates, prompts, and direct code exports."
-            trigger={
-              <button className="rounded-md border border-primary-foreground/30 px-4 py-2.5 text-sm font-medium hover:bg-primary-foreground/10">
-                See pricing
-              </button>
-            }
-          />
+          <Link
+            to="/signup"
+            className="rounded-md border border-primary-foreground/30 px-4 py-2.5 text-sm font-medium hover:bg-primary-foreground/10"
+          >
+            Create free account
+          </Link>
         </div>
       </div>
     </section>

@@ -11,9 +11,13 @@ import {
   Sun,
   Moon,
   ArrowLeft,
+  LogOut,
+  LogIn,
 } from "lucide-react";
+import { toast } from "sonner";
 import { LenxlLogo } from "@/components/LenxlLogo";
 import { useTemplates } from "@/lib/templates-store";
+import { useAuth } from "@/lib/auth-context";
 
 export function LibrarySidebar() {
   const routerState = useRouterState();
@@ -21,6 +25,7 @@ export function LibrarySidebar() {
   const navigate = useNavigate();
 
   const { searchQuery, setSearchQuery, savedIds, theme, setTheme, userProfile } = useTemplates();
+  const { user, signOut } = useAuth();
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -171,25 +176,50 @@ export function LibrarySidebar() {
           <span>Landing Page</span>
         </Link>
 
-        {/* User Card */}
-        <Link
-          to="/settings"
-          className="flex items-center gap-2.5 rounded-lg border border-[#E5E5E5] bg-[#FAFAFA] p-2 transition-colors hover:border-[#CCCCCC] dark:border-[#222222] dark:bg-[#080808] dark:hover:border-[#333333]"
-        >
-          <img
-            src={userProfile.avatar}
-            alt={userProfile.name}
-            className="h-8 w-8 rounded-full object-cover border border-[#E5E5E5] dark:border-[#333333]"
-          />
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-xs font-semibold text-[#111111] dark:text-[#FFFFFF]">
-              {userProfile.name}
-            </div>
-            <div className="truncate text-[10px] text-[#666666] dark:text-[#A1A1A1]">
-              {userProfile.role}
-            </div>
+        {/* User Card / Sign-in */}
+        {user ? (
+          <div className="flex items-center justify-between rounded-lg border border-[#E5E5E5] bg-[#FAFAFA] p-2 dark:border-[#222222] dark:bg-[#080808]">
+            <Link
+              to="/settings"
+              className="flex items-center gap-2.5 min-w-0 flex-1 hover:opacity-80 transition-opacity"
+            >
+              <img
+                src={userProfile.avatar}
+                alt={userProfile.name}
+                className="h-8 w-8 rounded-full object-cover border border-[#E5E5E5] dark:border-[#333333]"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-xs font-semibold text-[#111111] dark:text-[#FFFFFF]">
+                  {userProfile.name}
+                </div>
+                <div className="truncate text-[10px] text-[#666666] dark:text-[#A1A1A1]">
+                  {user.email || userProfile.role}
+                </div>
+              </div>
+            </Link>
+
+            <button
+              onClick={async () => {
+                await signOut();
+                toast.success("Signed out successfully");
+              }}
+              title="Sign out"
+              className="flex h-7 w-7 items-center justify-center rounded-md text-[#888888] hover:bg-neutral-200 hover:text-[#111111] dark:text-[#777777] dark:hover:bg-[#1A1A1A] dark:hover:text-white transition-colors ml-1"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
           </div>
-        </Link>
+        ) : (
+          <div className="space-y-2">
+            <Link
+              to="/login"
+              className="flex items-center justify-center gap-2 w-full rounded-lg bg-[#111111] px-3 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-black"
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              <span>Sign in / Sign up</span>
+            </Link>
+          </div>
+        )}
       </div>
     </aside>
   );
